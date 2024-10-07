@@ -30,7 +30,7 @@ def test_new_map():
     assert map["prime"] == 109345121
 
 
-@pytest.mark.skip(reason="No implementado aun")
+
 def test_put():
     map = setup_tests(None, None)
     mp.put(map, 1, 2)

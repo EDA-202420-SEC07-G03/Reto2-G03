@@ -20,6 +20,7 @@ def load_data(catalog, filename):
     
     
     for elemento in movies:
+        
         rta = {}
         rta['id'] = elemento['id']
         rta['title'] =  elemento['title']
@@ -43,6 +44,8 @@ def load_data(catalog, filename):
             lt.add_first(x,production_companies)
         
         rta['production_companies'] = x
+        
+        
     
     return catalog
 

@@ -6,7 +6,7 @@ def cmp_function(a,b):
     if a==b:
         return 0
 def new_map(num_keys, load_factor, prime=109345121):
-
+ 
     capacity = mp.next_prime(num_keys//load_factor)
     scale = rd.randint(1, prime-1)
     shift = rd.randint(0, prime-1)
@@ -25,8 +25,9 @@ def new_map(num_keys, load_factor, prime=109345121):
     return hash_table
 def put(my_map, key, value):
     
-    if my_map['size'] / my_map['capacity'] >= my_map['limit_factor']:
-        my_map = rehash(my_map)  
+    if my_map['size']+1  > my_map['capacity']*  my_map['limit_factor']:
+       rehash(my_map) 
+       print(my_map)
 
     index = mp.hash_value(my_map, key)  
     añadir = me.new_map_entry(key, value)
