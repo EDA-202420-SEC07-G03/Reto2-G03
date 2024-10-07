@@ -3,11 +3,12 @@ import csv
 import json
 from DataStructures.List import array_list as lt
 from DataStructures.Map import map_linear_probing as mp
+from DataStructures.Map import map_functions as mf
 def new_logic():
     """
     Crea el catalogo para almacenar las estructuras de datos
     """
-    catalog = mp.new_map()
+    catalog = mp.new_map(89,0.5,prime=109345121)
     
     return catalog
  
@@ -44,7 +45,8 @@ def load_data(catalog, filename):
             lt.add_first(x,production_companies)
         
         rta['production_companies'] = x
-        
+        hash=mf.hash_value(rta['original_language'])
+
         
     
     return catalog
