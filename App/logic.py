@@ -1,21 +1,50 @@
 import time
-
+import csv
+import json
+from DataStructures.List import array_list as lt
+from DataStructures.Map import map_linear_probing as mp
 def new_logic():
     """
     Crea el catalogo para almacenar las estructuras de datos
     """
-    #TODO: Llama a las funciónes de creación de las estructuras de datos
-    pass
-
+    catalog = mp.new_map()
+    
+    return catalog
+ 
 
 # Funciones para la carga de datos
 
 def load_data(catalog, filename):
-    """
-    Carga los datos del reto
-    """
-    # TODO: Realizar la carga de datos
-    pass
+    movies = csv.DictReader(open(".\\Data\\Challenge-1\\"+filename, encoding='utf-8'))
+    
+    
+    
+    for elemento in movies:
+        rta = {}
+        rta['id'] = elemento['id']
+        rta['title'] =  elemento['title']
+        rta['original_language'] = elemento['original_language']
+        rta['release_date'] = elemento['release_date']
+        rta['revenue'] = elemento['revenue']
+        rta['runtime'] = elemento['runtime']
+        rta['status'] = elemento['status']
+        rta['vote_average'] = elemento['vote_average']
+        rta['vote_count'] = elemento['vote_count']
+        rta['budget'] = elemento['budget']
+        genres_list = json.loads(elemento['genres'].replace("'","\""))
+        k=lt.new_list()
+        for genre in genres_list: 
+            lt.add_first(k,genre)
+        rta['genres'] = k
+        
+        production_companies_list = json.loads(elemento['production_companies'])
+        x = lt.new_list()
+        for production_companies in production_companies_list:
+            lt.add_first(x,production_companies)
+        
+        rta['production_companies'] = x
+    
+    return catalog
 
 # Funciones de consulta sobre el catálogo
 
