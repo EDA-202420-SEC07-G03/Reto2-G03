@@ -11,7 +11,7 @@ def new_logic():
     """
     control = logic.new_logic()
     return control
-
+ 
 def print_menu():
     print("Bienvenido")
     print("1- Cargar información")
@@ -31,7 +31,11 @@ def load_data(control):
     """
     filename = input("Ingrese el nombre del archivo (con el .csv): ")
     movies = logic.load_data(control,filename)
-    print("se han cargado " + str(movies['movies']['size']) + " peliculas")
+    total=0
+    for i in range(0,89):
+        total+= len[movies["ordenado_idioma"][i]]
+    print("se han cargado " + str(movies['movies']['size']) + " peliculas en la lista ")
+    print("se han cargado " + str(total) + " peliculas en la tabla ")
 
 
 def print_data(control, id):
