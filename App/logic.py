@@ -12,7 +12,7 @@ def new_logic():
     Crea el catalogo para almacenar las estructuras de datos
     """
     catalog = {"movies":None,
-               "ordenado_idioma":None}
+               "ordenado_idioma":None,"ordenado_año":None,"ordenado_product":None}
     
     catalog["movies"] = lt.new_list()
     catalog["ordenado_idioma"] = mp.new_map(89,1)
@@ -159,15 +159,44 @@ def req_7(catalog,productora,inicial,final):
     """
     Retorna el resultado del requerimiento 7
     """
-    trabajo=catalog["ordenado_año"]["table"]["elements"]
-    int_ini=int(inicial)
-    int_fin=int(final)
-    dicc={}
-    for i in range (0,len(trabajo)):
-        if int(trabajo[i]["key"])>=int_ini and int(trabajo[i]["key"])<=int_fin:
-            if trabajo[i]["key"] not in dicc:
-                dicc[trabajo[i]["key"]]=trabajo[i]["value"]
-    
+    estadistica={}
+    for i in range(0,lt.size(catalog["movies"])):
+        for j in range(0,lt.size(catalog["movies"]["elements"][i]["production_companies"])):
+         if str(catalog["movies"]["elements"][i]["production_companies"]["elements"][j]["name"])==productora and int(catalog["movies"]["elements"][i]["release_date"][:4]) >= int(inicial) and int(catalog["movies"]["elements"][i]["release_date"][:4]) <= int(final): 
+                     año = catalog["movies"]["elements"][i]["release_date"][:4]
+                     if año not in estadistica:
+                        estadistica[año] = {
+                        'total': 0,'votacion_prom': 0,'duracion_prom': 0,'net_profit': 0,
+                        'mejor_peli': ("", float("-inf")),'peor_peli': ("", float("inf"))}
+                     estadistica[año]['total'] += 1
+                     estadistica[año]['votacion_prom'] += float(catalog["movies"]["elements"][i]["vote_average"])
+                     estadistica[año]['duracion_prom'] += float(catalog["movies"]["elements"][i]["runtime"])
+                     if ((catalog["movies"]["elements"][i]["revenue"]) or(catalog["movies"]["elements"][i]["budget"]))=="0":
+                      net_profit="undefined"
+                     else:
+                       net_profit=int(catalog["movies"]["elements"][i]["revenue"])-int(catalog["movies"]["elements"][i]["budget"])
+                     if net_profit!="undefined":
+                       estadistica[año]["net_profit"]+=net_profit
+                     votacion = float(catalog["movies"]["elements"][i]['vote_average'])
+                     nombre = catalog["movies"]["elements"][i]["title"]
+                     if votacion > estadistica[año]['mejor_peli'][1]:
+                       estadistica[año]['mejor_peli'] = (nombre, votacion)
+                     if votacion < estadistica[año]['peor_peli'][1]:
+                       estadistica[año]['peor_peli'] = (nombre, votacion)
+    estadistica_final={}
+    i=int(inicial)
+    fini=int(final)
+    while i < fini+1:
+        if str(i) in estadistica:
+          estadistica_final[str(i)] = {
+                'total': estadistica[str(i)]["total"],
+                'votacion_prom': estadistica[str(i)]["votacion_prom"] / estadistica[str(i)]["total"],
+                'duracion_prom': estadistica[str(i)]["duracion_prom"] / estadistica[str(i)]["total"],
+                'net_profit': estadistica[str(i)]["net_profit"],
+                'mejor_peli': estadistica[str(i)]["mejor_peli"],
+                'peor_peli': estadistica[str(i)]["peor_peli"]}
+        i+=1
+    return estadistica_final
 
 
 

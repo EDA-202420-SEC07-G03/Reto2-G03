@@ -65,8 +65,14 @@ def load_data(control):
        if movies["movies"]["elements"][i]["release_date"][:4] not in list:
            list.append(movies["movies"]["elements"][i]["release_date"][:4])
     print(len(list))
- 
-    
+    """"
+    d=[]
+    for i in range(0,lt.size(movies["movies"])):
+       for j in range(0,lt.size(movies["movies"]["elements"][i]["production_companies"])):
+        if movies["movies"]["elements"][i]["production_companies"]["elements"][j]["name"] not in d:
+           d.append(movies["movies"]["elements"][i]["production_companies"]["elements"][j]["name"])
+    print(len(d))
+    """
 
 
 
@@ -126,11 +132,8 @@ def print_req_6(control):
     pass
 
 
-def print_req_7(control):
-    """
-        Función que imprime la solución del Requerimiento 7 en consola
-    """
-    # TODO: Imprimir el resultado del requerimiento 7
+def print_req_7(sol):
+    print(sol)
     pass
 
 
@@ -177,7 +180,11 @@ def main():
             print_req_6(control)
 
         elif int(inputs) == 8:
-            print_req_7(control)
+            fecha_inf=float(input("ingrese el limite inferior del rango de años: "))
+            fecha_sup=float(input("ingrese el limite superior del rango de años: "))
+            productora= input("ingrese la productora de la pelicula: ")
+            sol=logic.req_7(control,productora,fecha_inf,fecha_sup)
+            print_req_7(sol)
 
         elif int(inputs) == 9:
             print_req_8(control)
