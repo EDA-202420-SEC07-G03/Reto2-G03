@@ -30,7 +30,7 @@ def put(my_map, key, value):
        rehash(my_map) 
        print(my_map)
 
-    index = mp.hash_value(my_map, key)  
+    index = mp.hash_value(my_map, key)  % my_map['capacity']
     añadir = me.new_map_entry(key, value)
 
     
@@ -50,7 +50,7 @@ def put(my_map, key, value):
             return my_map
 
         
-        index = (index + 1)  
+        index = (index + 1) % my_map['capacity'] 
 
     return my_map  
 

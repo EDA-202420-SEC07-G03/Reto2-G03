@@ -1,6 +1,8 @@
 import sys
 from App import logic as logic
 from itertools import islice
+from DataStructures.List import array_list as lt
+from DataStructures.Map import map_linear_probing as mp
 
 default_limit = 1000
 sys.setrecursionlimit(default_limit*10)
@@ -31,11 +33,16 @@ def load_data(control):
     """
     filename = input("Ingrese el nombre del archivo (con el .csv): ")
     movies = logic.load_data(control,filename)
-    total=0
-    for i in range(0,89):
-        total+= len[movies["ordenado_idioma"]["table"]["size"][i]]
-    print("se han cargado " + str(movies['movies']['size']) + " peliculas en la lista ")
-    print("se han cargado " + str(total) + " peliculas en la tabla ")
+    total_movies = 0
+    
+    for i in range(0, movies['ordenado_idioma']['capacity']):
+        entry = movies['ordenado_idioma']['table']['elements'][i]
+        
+        if entry['key'] is not None:  
+            total_movies += lt.size(entry['value'])  
+    
+    print("Se han cargado " + str(movies['movies']['size']) + " películas en la lista.")
+    print("Se han cargado " + str(total_movies) + " películas en la tabla.")
 
 
 def print_data(control, id):
