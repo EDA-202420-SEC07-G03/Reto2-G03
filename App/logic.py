@@ -62,13 +62,12 @@ def load_data(catalog, filename):
             lista_peliculas = lt.new_list()
             lt.add_last(lista_peliculas, rta)
             mp.put(catalog['ordenado_idioma'], idioma, lista_peliculas)
-        else:
-            lista_peliculas = mp.get_value(movies_in_language)  
-            lt.add_last(lista_peliculas, rta)
-      
-                
-    return catalog
+        else: 
+            lt.add_last(movies_in_language, rta)  
 
+                    
+    return catalog
+        
     
         
         
