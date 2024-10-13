@@ -33,7 +33,7 @@ def load_data(control):
     movies = logic.load_data(control,filename)
     total=0
     for i in range(0,89):
-        total+= len[movies["ordenado_idioma"][i]]
+        total+= len[movies["ordenado_idioma"]["table"]["size"][i]]
     print("se han cargado " + str(movies['movies']['size']) + " peliculas en la lista ")
     print("se han cargado " + str(total) + " peliculas en la tabla ")
 
