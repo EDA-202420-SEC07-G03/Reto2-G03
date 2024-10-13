@@ -14,7 +14,7 @@ def new_map(num_keys, load_factor, prime=109345121):
                  'capacity': capacity,
                  'scale': scale,
                  'shift': shift,
-                 'table': lt.new_list(),
+                 'table':lt.new_list(),
                  'current_factor': 0,
                  'limit_factor': load_factor,
                  'size': 0,
@@ -24,6 +24,7 @@ def new_map(num_keys, load_factor, prime=109345121):
        lt.add_last(hash_table['table'], entry)
     return hash_table
 def put(my_map, key, value):
+    
     
     if my_map['size']+1  > my_map['capacity']*  my_map['limit_factor']:
        rehash(my_map) 

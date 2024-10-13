@@ -4,19 +4,25 @@ import json
 from DataStructures.List import array_list as lt
 from DataStructures.Map import map_linear_probing as mp
 from DataStructures.Map import map_functions as mf
+
+csv.field_size_limit(2147483647)
+
 def new_logic():
     """
     Crea el catalogo para almacenar las estructuras de datos
     """
-    catalog = mp.new_map(89,0.5,prime=109345121)
+    catalog = {"movies":None,
+               "ordenado_idioma":None}
     
+    catalog["movies"] = lt.new_list()
+    catalog["ordenado_idioma"] = mp.new_map(89,0.5)
     return catalog
  
 
 # Funciones para la carga de datos
 
 def load_data(catalog, filename):
-    movies = csv.DictReader(open(".\\Data\\Challenge-1\\"+filename, encoding='utf-8'))
+    movies = csv.DictReader(open(".\\Data\\Challenge-2\\"+filename, encoding='utf-8'))
     
     
     
@@ -36,20 +42,36 @@ def load_data(catalog, filename):
         genres_list = json.loads(elemento['genres'].replace("'","\""))
         k=lt.new_list()
         for genre in genres_list: 
-            lt.add_first(k,genre)
+            lt.add_last(k,genre)
         rta['genres'] = k
         
         production_companies_list = json.loads(elemento['production_companies'])
         x = lt.new_list()
         for production_companies in production_companies_list:
-            lt.add_first(x,production_companies)
+            lt.add_last(x,production_companies)
         
         rta['production_companies'] = x
-        hash=mf.hash_value(rta['original_language'])
-
+        lt.add_last(catalog["movies"],rta)
+        
+        idioma = elemento['original_language']
+        
+        
+        movies_in_language = mp.get(catalog['ordenado_idioma'], idioma)
+        
+        if movies_in_language is None:
+            
+            lista_peliculas = lt.new_list()
+            lt.add_last(lista_peliculas, rta)  
+            mp.put(catalog['ordenado_idioma'], idioma, lista_peliculas)  
+        else:
+            
+            lt.add_last(movies_in_language, rta)  
+            
+    return catalog
         
     
-    return catalog
+        
+        
 
 # Funciones de consulta sobre el catálogo
 
