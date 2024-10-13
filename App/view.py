@@ -50,6 +50,8 @@ def load_data(control):
             total_movies2 += lt.size(entry['value']) 
             total_años+=1 
     
+
+    
     print("Se han cargado " + str(movies['movies']['size']) + " películas en la lista.")
     print("Se han cargado " + str(total_movies) + " películas en la tabla.")
     print(lt.size(movies['ordenado_idioma']["table"]))
@@ -63,6 +65,8 @@ def load_data(control):
        if movies["movies"]["elements"][i]["release_date"][:4] not in list:
            list.append(movies["movies"]["elements"][i]["release_date"][:4])
     print(len(list))
+ 
+    
 
 
 

@@ -17,6 +17,7 @@ def new_logic():
     catalog["movies"] = lt.new_list()
     catalog["ordenado_idioma"] = mp.new_map(89,1)
     catalog["ordenado_año"]=mp.new_map(135,1)
+    catalog["ordenado_product"]=mp.new_map(135,1)
     return catalog
  
 
@@ -30,7 +31,6 @@ def get_anio(date):
     return date[:4] 
 def load_data(catalog, filename):
     movies = csv.DictReader(open(".\\Data\\Challenge-2\\"+filename, encoding='utf-8'))
-    
     
     
     for elemento in movies:
@@ -80,6 +80,11 @@ def load_data(catalog, filename):
             mp.put(catalog['ordenado_año'], año, lista_año)
         else: 
             lt.add_last(movies_in_anio, rta)
+        
+        
+        
+        
+        
 
                     
     return catalog
@@ -144,14 +149,29 @@ def req_6(catalog):
     # TODO: Modificar el requerimiento 6
     pass
 
+def is_name_in_list(name, company_list):
+    for company in company_list:
+        if company['name'] == name:
+            return True
+    return False
+def req_7(catalog,productora,inicial,final):
 
-def req_7(catalog):
     """
     Retorna el resultado del requerimiento 7
     """
-    # TODO: Modificar el requerimiento 7
-    pass
+    trabajo=catalog["ordenado_año"]["table"]["elements"]
+    int_ini=int(inicial)
+    int_fin=int(final)
+    dicc={}
+    for i in range (0,len(trabajo)):
+        if int(trabajo[i]["key"])>=int_ini and int(trabajo[i]["key"])<=int_fin:
+            if trabajo[i]["key"] not in dicc:
+                dicc[trabajo[i]["key"]]=trabajo[i]["value"]
+    
 
+
+
+ 
 
 def req_8(catalog):
     """
