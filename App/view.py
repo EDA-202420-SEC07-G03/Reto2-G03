@@ -34,15 +34,19 @@ def load_data(control):
     filename = input("Ingrese el nombre del archivo (con el .csv): ")
     movies = logic.load_data(control,filename)
     total_movies = 0
-    
+    total_no =0
     for i in range(0, movies['ordenado_idioma']['capacity']):
         entry = movies['ordenado_idioma']['table']['elements'][i]
         
         if entry['key'] is not None:  
-            total_movies += lt.size(entry['value'])  
+            total_movies += lt.size(entry['value']) 
+            total_no+=1 
     
     print("Se han cargado " + str(movies['movies']['size']) + " películas en la lista.")
     print("Se han cargado " + str(total_movies) + " películas en la tabla.")
+    print(lt.size(movies['ordenado_idioma']["table"]))
+    print(str(total_no))
+
 
 
 def print_data(control, id):
