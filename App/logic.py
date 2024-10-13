@@ -16,11 +16,18 @@ def new_logic():
     
     catalog["movies"] = lt.new_list()
     catalog["ordenado_idioma"] = mp.new_map(89,0.5)
+    catalog["ordenado_año"]=mp.new_map(60,0.9)
     return catalog
  
 
 # Funciones para la carga de datos
-
+def fecha_str_a_fecha_dias(date):
+    año=float(date[:4])
+    mes=float(date[5:7])
+    dias=float(date[8:])
+    return (año*365)+(mes*30)+(dias)
+def get_anio(date):
+    return date[:4] 
 def load_data(catalog, filename):
     movies = csv.DictReader(open(".\\Data\\Challenge-2\\"+filename, encoding='utf-8'))
     
@@ -64,6 +71,15 @@ def load_data(catalog, filename):
             mp.put(catalog['ordenado_idioma'], idioma, lista_peliculas)
         else: 
             lt.add_last(movies_in_language, rta)  
+        
+        año=get_anio(elemento["release_date"])
+        movies_in_anio = mp.get(catalog['ordenado_año'], año)
+        if movies_in_anio is None:
+            lista_año = lt.new_list()
+            lt.add_last(lista_año, rta)
+            mp.put(catalog['ordenado_año'], año, lista_año)
+        else: 
+            lt.add_last(movies_in_anio, rta)
 
                     
     return catalog

@@ -41,11 +41,29 @@ def load_data(control):
         if entry['key'] is not None:  
             total_movies += lt.size(entry['value']) 
             total_no+=1 
+    total_movies2 = 0
+    total_años =0
+    for i in range(0, movies['ordenado_año']['capacity']):
+        entry = movies['ordenado_año']['table']['elements'][i]
+        
+        if entry['key'] is not None:  
+            total_movies2 += lt.size(entry['value']) 
+            total_años+=1 
     
     print("Se han cargado " + str(movies['movies']['size']) + " películas en la lista.")
     print("Se han cargado " + str(total_movies) + " películas en la tabla.")
     print(lt.size(movies['ordenado_idioma']["table"]))
     print(str(total_no))
+    print("Se han cargado " + str(total_movies2) + " películas en la tabla 2.")
+    print(lt.size(movies['ordenado_año']["table"]))
+    print(str(total_años))
+    
+    list=[]
+    for i in range(0,lt.size(movies["movies"])):
+       if movies["movies"]["elements"][i]["release_date"][:4] not in list:
+           list.append(movies["movies"]["elements"][i]["release_date"][:4])
+    print(len(list))
+
 
 
 
