@@ -23,14 +23,15 @@ def new_map(num_keys, load_factor, prime=109345121):
        entry = me.new_map_entry(None, None)
        lt.add_last(hash_table['table'], entry)
     return hash_table
+ 
 def put(my_map, key, value):
     
     
     if my_map['size']+1  > my_map['capacity']*  my_map['limit_factor']:
        rehash(my_map) 
-       print(my_map)
+       
 
-    index = mp.hash_value(my_map, key)  % my_map['capacity']
+    index = mp.hash_value(my_map, key)  
     añadir = me.new_map_entry(key, value)
 
     
@@ -50,7 +51,7 @@ def put(my_map, key, value):
             return my_map
 
         
-        index = (index + 1) % my_map['capacity'] 
+        index = (index + 1)  
 
     return my_map  
 
