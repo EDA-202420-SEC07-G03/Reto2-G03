@@ -7,6 +7,7 @@ from DataStructures.Map import map_functions as mf
 
 csv.field_size_limit(2147483647)
 
+
 def new_logic():
     """
     Crea el catalogo para almacenar las estructuras de datos
@@ -27,8 +28,10 @@ def fecha_str_a_fecha_dias(date):
     mes=float(date[5:7])
     dias=float(date[8:])
     return (año*365)+(mes*30)+(dias)
+
 def get_anio(date):
     return date[:4] 
+
 def load_data(catalog, filename):
     movies = csv.DictReader(open(".\\Data\\Challenge-2\\"+filename, encoding='utf-8'))
     
@@ -80,19 +83,9 @@ def load_data(catalog, filename):
             mp.put(catalog['ordenado_año'], año, lista_año)
         else: 
             lt.add_last(movies_in_anio, rta)
-        
-        
-        
-        
-        
-
-                    
+                       
     return catalog
         
-    
-        
-        
-
 # Funciones de consulta sobre el catálogo
 
 def get_data(catalog, id):
@@ -103,26 +96,110 @@ def get_data(catalog, id):
     pass
 
 
-def req_1(catalog):
+def req_1(catalog, idioma, movie_title):
     """
-    Retorna el resultado del requerimiento 1
+    Retorna la información de una película dada por su nombre y lenguaje original de publicación,
+    utilizando una tabla de hash para buscar eficientemente.
     """
     # TODO: Modificar el requerimiento 1
-    pass
+    entry = mp.get(catalog['ordenado_idioma'], idioma)
+    
+    if entry is None:
+        return "Ninguna película fue encontrada"
+    
+    movies_in_language = entry['elements']
+    
+    for movie in movies_in_language:
+        if movie['title'].lower() == movie_title.lower():
+    
+            if float(movie["revenue"])!=0 and float(movie["budget"])!=0:
+                movie["net_profit"]=float(movie["revenue"])-float(movie["budget"])
+            
+            respuesta = {
+                "Título original": movie['title'],
+                "Duración (minutos)": movie['runtime'],
+                "Fecha de publicación": movie['release_date'],
+                "Presupuesto": movie['budget'],
+                "Dinero recaudado": movie['revenue'],
+                "Ganancia neta": movie['net_profit'],
+                "Puntaje de calificación": movie['vote_average'],
+                "Idioma original": movie['original_language']
+            }
+            return respuesta
+    
+    return "Ninguna película fue encontrada"
 
-
-def req_2(catalog):
+def req_2(catalog, n, idioma):
     """
     Retorna el resultado del requerimiento 2
     """
     # TODO: Modificar el requerimiento 2
-    pass
+    
+    movies_in_language = mp.get(catalog['ordenado_idioma'], idioma)
+
+    if movies_in_language is None:
+        return {
+            "total_movies": 0,
+            "movies": []
+        }
+
+    if not isinstance(movies_in_language):
+        print(f"Error: el valor obtenido para '{idioma}' no es una lista.")
+        return {
+            "total_movies": 0,
+            "movies": []
+        }
+
+    movie_list = movies_in_language
+
+    total_movies = lt.size(movie_list)
+
+    if total_movies == 0:
+        return {
+            "total_movies": 0,
+            "movies": []
+        }
+        
+    sorted_movies = sorted(
+        (lt.get_element(movie_list, i) for i in range(1, total_movies + 1)),
+        key=lambda movie: movie['release_date'],
+        reverse=True
+    )
+
+    n = min(n, total_movies)
+
+    resultado = {
+        "total_movies": total_movies,
+        "movies": []
+    }
+
+    for i in range(n):
+        movie = sorted_movies[i]
+        budget = movie['budget'] if movie['budget'] else "Undefined"
+        revenue = movie['revenue'] if movie['revenue'] else "Undefined"
+        profit = (
+            int(revenue) - int(budget) if budget != "Undefined" and revenue != "Undefined" else "Undefined"
+        )
+
+        resultado['movies'].append({
+            "release_date": movie['release_date'],
+            "original_title": movie['title'],
+            "budget": budget,
+            "revenue": revenue,
+            "profit": profit,
+            "runtime": movie['runtime'],
+            "vote_average": movie['vote_average']
+        })
+
+    return resultado
+
 
 def fecha_str_a_fecha_dias(date):
     año=float(date[:4])
     mes=float(date[5:7])
     dias=float(date[8:])
     return (año*365)+(mes*30)+(dias)
+
 def req_3(catalog,idioma,fecha_ini,fecha_final):
     posicion_hash=None
     for i in range(0,lt.size(catalog["ordenado_idioma"]["table"])):
