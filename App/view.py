@@ -100,13 +100,17 @@ def print_req_2(control):
     pass
 
 
-def print_req_3(control):
-    """
-        Función que imprime la solución del Requerimiento 3 en consola
-    """
-    # TODO: Imprimir el resultado del requerimiento 3
-    pass
+def print_req_3(sol):
+    lista=list(sol.items())
+    if sol["total"]>=10:
+        for i in range(0,11):
+            print(lista[i][1])
+    else:
+        for i in range(0,len(lista)):
+            print(lista[i][1])
 
+    print(" el total de peliculas es " + str(sol["total"]))
+    print(" el tiempo  promedio de las peliculas es " + str(sol["tiempo_prom"]))
 
 def print_req_4(control):
     """
@@ -168,7 +172,11 @@ def main():
             print_req_2(control)
 
         elif int(inputs) == 4:
-            print_req_3(control)
+            fecha_inf=input("ingrese el limite inferior de fecha: ")
+            fecha_sup=input("ingrese el limite superior de fecha: ")
+            idioma= input("ingrese la productora de la pelicula: ")
+            sol=logic.req_3(control,idioma,fecha_inf,fecha_sup)
+            print_req_3(sol)
 
         elif int(inputs) == 5:
             print_req_4(control)

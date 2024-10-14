@@ -118,14 +118,43 @@ def req_2(catalog):
     # TODO: Modificar el requerimiento 2
     pass
 
+def fecha_str_a_fecha_dias(date):
+    año=float(date[:4])
+    mes=float(date[5:7])
+    dias=float(date[8:])
+    return (año*365)+(mes*30)+(dias)
+def req_3(catalog,idioma,fecha_ini,fecha_final):
+    posicion_hash=None
+    for i in range(0,lt.size(catalog["ordenado_idioma"]["table"])):
+        if idioma == catalog["ordenado_idioma"]["table"]["elements"][i]["key"]:
+            posicion_hash=i
+    fecha_i=fecha_str_a_fecha_dias(fecha_ini)
+    fecha_f=fecha_str_a_fecha_dias(fecha_final)
+    dic={}
+    total=0
+    tiempo_prom=0
+    for j in range(0,len(catalog["ordenado_idioma"]["table"]["elements"][posicion_hash]["value"]["elements"])):
+        if fecha_str_a_fecha_dias(catalog["ordenado_idioma"]["table"]["elements"][posicion_hash]["value"]["elements"][j]["release_date"])>=fecha_i and fecha_str_a_fecha_dias(catalog["ordenado_idioma"]["table"]["elements"][posicion_hash]["value"]["elements"][j]["release_date"])<= fecha_f:
+            total+=1
+            tiempo_prom+=float(catalog["ordenado_idioma"]["table"]["elements"][posicion_hash]["value"]["elements"][j]["runtime"])
+            if fecha_str_a_fecha_dias(catalog["ordenado_idioma"]["table"]["elements"][posicion_hash]["value"]["elements"][j]["release_date"]) not in dic:
+                catalog["ordenado_idioma"]["table"]["elements"][posicion_hash]["value"]["elements"][j]["net_profit"]="undefined"
+                if float(catalog["ordenado_idioma"]["table"]["elements"][posicion_hash]["value"]["elements"][j]["revenue"])!=0 and float(catalog["ordenado_idioma"]["table"]["elements"][posicion_hash]["value"]["elements"][j]["budget"])!=0:
+                    catalog["ordenado_idioma"]["table"]["elements"][posicion_hash]["value"]["elements"][j]["net_profit"]=float(catalog["ordenado_idioma"]["table"]["elements"][posicion_hash]["value"]["elements"][j]["revenue"])-float(catalog["ordenado_idioma"]["table"]["elements"][posicion_hash]["value"]["elements"][j]["budget"])
+                dic[fecha_str_a_fecha_dias(catalog["ordenado_idioma"]["table"]["elements"][posicion_hash]["value"]["elements"][j]["release_date"])]=catalog["ordenado_idioma"]["table"]["elements"][posicion_hash]["value"]["elements"][j]
+    new_dic=dict(sorted(dic.items()))
+    new_dic["total"]=total
+    if total!=0:
+     new_dic["tiempo_prom"]=tiempo_prom/total
+    else:
+        new_dic["tiempo_prom"]="no hay ninguna pelicula para promediar"
+    return new_dic
+    
 
-def req_3(catalog):
-    """
-    Retorna el resultado del requerimiento 3
-    """
-    # TODO: Modificar el requerimiento 3
-    pass
 
+
+
+    
 
 def req_4(catalog):
     """
