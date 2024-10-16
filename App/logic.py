@@ -91,8 +91,11 @@ def get_data(catalog, id):
     """
     Retorna un dato por su ID.
     """
-    #TODO: Consulta en las Llamar la función del modelo para obtener un dato
-    pass
+    for i in range(0,lt.size(catalog["movies"])):
+        if catalog["movies"]["elements"][i]["id"]==id:
+            return catalog["movies"]["elements"][i]
+        else:
+            return "no se encontro"
 
 
 def req_1(catalog, idioma, movie_title):
