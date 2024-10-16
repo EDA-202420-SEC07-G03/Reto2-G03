@@ -85,37 +85,33 @@ def print_req_1(control, idioma, movie_title):
     """
     Función que imprime la solución del Requerimiento 1 en consola
     """
-    # Llamar al requerimiento 1 con los parámetros necesarios
     resultado = logic.req_1(control, idioma, movie_title)
     
     if isinstance(resultado, dict):
-        # Imprimir los detalles de la película encontrada
         print("\nInformación de la película encontrada:")
         for key, value in resultado.items():
             print(f"{key}: {value}")
     else:
-        # Imprimir el mensaje de que no se encontró la película
         print(resultado)
 
 def print_req_2(control, n , idioma):
     """
         Función que imprime la solución del Requerimiento 2 en consola
     """
-    # TODO: Imprimir el resultado del requerimiento 2
-    if not n.isdigit():
-        print('Ingrese un número válido')
+    if not n.isnumeric() or int(n) <= 0:
+        print("Ingrese un número válido para 'n'.")
         return
-    
+
     n = int(n)
 
-    solucion = logic.req_2(control, n, idioma)
+    resultado = logic.req_2(control, n, idioma)
 
-    total_movies = solucion['total_movies']
+    total_movies = resultado['total_movies']
     print(f"\nEl total de películas publicadas en '{idioma}': {total_movies}")
 
     if total_movies > 0:
         print("\nÚltimas películas publicadas:")
-        for movie in solucion['movies']:
+        for movie in resultado['movies']:
             print(f"Fecha de publicación: {movie['release_date']}")
             print(f"Título original: {movie['original_title']}")
             print(f"Presupuesto: {movie['budget']}")
@@ -123,7 +119,6 @@ def print_req_2(control, n , idioma):
             print(f"Ganancia: {movie['profit']}")
             print(f"Duración: {movie['runtime']} minutos")
             print(f"Puntaje de calificación: {movie['vote_average']}")
-            print("-" * 40)
     else:
         print("No hay películas disponibles para mostrar.")
 

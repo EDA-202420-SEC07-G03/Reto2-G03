@@ -98,10 +98,8 @@ def get_data(catalog, id):
 
 def req_1(catalog, idioma, movie_title):
     """
-    Retorna la información de una película dada por su nombre y lenguaje original de publicación,
-    utilizando una tabla de hash para buscar eficientemente.
+    Retorna el resultado del requerimiento 1
     """
-    # TODO: Modificar el requerimiento 1
     entry = mp.get(catalog['ordenado_idioma'], idioma)
     
     if entry is None:
@@ -111,9 +109,10 @@ def req_1(catalog, idioma, movie_title):
     
     for movie in movies_in_language:
         if movie['title'].lower() == movie_title.lower():
-    
-            if float(movie["revenue"])!=0 and float(movie["budget"])!=0:
-                movie["net_profit"]=float(movie["revenue"])-float(movie["budget"])
+                       
+            net_profit = None
+            if float(movie["revenue"]) != 0 and float(movie["budget"]) != 0:
+                net_profit = float(movie["revenue"]) - float(movie["budget"])
             
             respuesta = {
                 "Título original": movie['title'],
@@ -121,84 +120,77 @@ def req_1(catalog, idioma, movie_title):
                 "Fecha de publicación": movie['release_date'],
                 "Presupuesto": movie['budget'],
                 "Dinero recaudado": movie['revenue'],
-                "Ganancia neta": movie['net_profit'],
+                "Ganancia": net_profit,
                 "Puntaje de calificación": movie['vote_average'],
                 "Idioma original": movie['original_language']
             }
             return respuesta
-    
-    return "Ninguna película fue encontrada"
 
 def req_2(catalog, n, idioma):
     """
     Retorna el resultado del requerimiento 2
     """
-    # TODO: Modificar el requerimiento 2
+
+    movies_in_language_entry = mp.get(catalog['ordenado_idioma'], idioma)
+
+    if movies_in_language_entry is None:
+        return {
+            "total_movies": 0,
+            "movies": []
+        }
+
+    movie_list = movies_in_language_entry['elements']
+
+    movie_list_released = [movie for movie in movie_list if movie['status'] == 'Released']
+    total_movies = len(movie_list_released)
     
-    movies_in_language = mp.get(catalog['ordenado_idioma'], idioma)
-
-    if movies_in_language is None:
-        return {
-            "total_movies": 0,
-            "movies": []
-        }
-
-    if not isinstance(movies_in_language):
-        print(f"Error: el valor obtenido para '{idioma}' no es una lista.")
-        return {
-            "total_movies": 0,
-            "movies": []
-        }
-
-    movie_list = movies_in_language
-
-    total_movies = lt.size(movie_list)
-
     if total_movies == 0:
         return {
             "total_movies": 0,
             "movies": []
         }
-        
-    sorted_movies = sorted(
-        (lt.get_element(movie_list, i) for i in range(1, total_movies + 1)),
-        key=lambda movie: movie['release_date'],
-        reverse=True
-    )
+    lo = 0
+    hi = total_movies - 1
+    stack = [(lo, hi)]
 
+    while stack:
+        lo, hi = stack.pop()
+        if lo < hi:
+            pivot = movie_list_released[hi]
+            i = lo - 1
+            for j in range(lo, hi):
+                if movie_list_released[j]['release_date'] > pivot['release_date']:
+                    i += 1
+                    movie_list_released[i], movie_list_released[j] = movie_list_released[j], movie_list_released[i]
+            i += 1
+            movie_list_released[i], movie_list_released[hi] = movie_list_released[hi], movie_list_released[i]
+            stack.append((lo, i - 1))
+            stack.append((i + 1, hi))
     n = min(n, total_movies)
-
     resultado = {
         "total_movies": total_movies,
         "movies": []
     }
-
+    
     for i in range(n):
-        movie = sorted_movies[i]
+        movie = movie_list_released[i]   
         budget = movie['budget'] if movie['budget'] else "Undefined"
         revenue = movie['revenue'] if movie['revenue'] else "Undefined"
-        profit = (
-            int(revenue) - int(budget) if budget != "Undefined" and revenue != "Undefined" else "Undefined"
-        )
-
+        profit = None
+        if budget != "Undefined" and revenue != "Undefined":
+            profit = float(revenue) - float(budget)
+        
         resultado['movies'].append({
             "release_date": movie['release_date'],
             "original_title": movie['title'],
-            "budget": budget,
-            "revenue": revenue,
+            "budget": movie['budget'],
+            "revenue": movie['revenue'],
             "profit": profit,
             "runtime": movie['runtime'],
             "vote_average": movie['vote_average']
         })
-
+    
     return resultado
-
-
-def fecha_str_a_fecha_dias(date):
-    año=float(date[:4])
-    mes=float(date[5:7])
-    dias=float(date[8:])
-    return (año*365)+(mes*30)+(dias)
 
 def req_3(catalog,idioma,fecha_ini,fecha_final):
     posicion_hash=None
@@ -227,12 +219,6 @@ def req_3(catalog,idioma,fecha_ini,fecha_final):
         new_dic["tiempo_prom"]="no hay ninguna pelicula para promediar"
     return new_dic
     
-
-
-
-
-    
-
 def req_4(catalog):
     """
     Retorna el resultado del requerimiento 4
