@@ -74,9 +74,6 @@ def load_data(control):
     print(len(d))
     """
 
-
-
-
 def print_data(control, id):
     """
         Función que imprime un dato dado su ID
@@ -84,21 +81,46 @@ def print_data(control, id):
     #TODO: Realizar la función para imprimir un elemento
     pass
 
-def print_req_1(control):
+def print_req_1(control, idioma, movie_title):
     """
-        Función que imprime la solución del Requerimiento 1 en consola
+    Función que imprime la solución del Requerimiento 1 en consola
     """
-    # TODO: Imprimir el resultado del requerimiento 1
-    pass
+    resultado = logic.req_1(control, idioma, movie_title)
+    
+    if isinstance(resultado, dict):
+        print("\nInformación de la película encontrada:")
+        for key, value in resultado.items():
+            print(f"{key}: {value}")
+    else:
+        print(resultado)
 
-
-def print_req_2(control):
+def print_req_2(control, n , idioma):
     """
         Función que imprime la solución del Requerimiento 2 en consola
     """
-    # TODO: Imprimir el resultado del requerimiento 2
-    pass
+    if not n.isnumeric() or int(n) <= 0:
+        print("Ingrese un número válido para 'n'.")
+        return
 
+    n = int(n)
+
+    resultado = logic.req_2(control, n, idioma)
+
+    total_movies = resultado['total_movies']
+    print(f"\nEl total de películas publicadas en '{idioma}': {total_movies}")
+
+    if total_movies > 0:
+        print("\nÚltimas películas publicadas:")
+        for movie in resultado['movies']:
+            print(f"Fecha de publicación: {movie['release_date']}")
+            print(f"Título original: {movie['original_title']}")
+            print(f"Presupuesto: {movie['budget']}")
+            print(f"Ingresos: {movie['revenue']}")
+            print(f"Ganancia: {movie['profit']}")
+            print(f"Duración: {movie['runtime']} minutos")
+            print(f"Puntaje de calificación: {movie['vote_average']}")
+    else:
+        print("No hay películas disponibles para mostrar.")
 
 def print_req_3(sol):
     lista=list(sol.items())
@@ -166,10 +188,14 @@ def main():
             print("Cargando información de los archivos ....\n")
             data = load_data(control)
         elif int(inputs) == 2:
-            print_req_1(control)
+            idioma = input('Ingrese el idioma que quiere buscar: ')
+            movie_title = input('Ingrese la pelicula que quiere ver: ')
+            print_req_1(control, idioma, movie_title)
 
         elif int(inputs) == 3:
-            print_req_2(control)
+            n = input('Ingrese el total de peliculas que quiere: ')
+            idioma = input('Ingrese el idioma que quiere buscar: ')
+            print_req_2(control, n, idioma)
 
         elif int(inputs) == 4:
             fecha_inf=input("ingrese el limite inferior de fecha: ")

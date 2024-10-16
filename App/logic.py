@@ -7,6 +7,7 @@ from DataStructures.Map import map_functions as mf
 
 csv.field_size_limit(2147483647)
 
+
 def new_logic():
     """
     Crea el catalogo para almacenar las estructuras de datos
@@ -27,8 +28,10 @@ def fecha_str_a_fecha_dias(date):
     mes=float(date[5:7])
     dias=float(date[8:])
     return (año*365)+(mes*30)+(dias)
+
 def get_anio(date):
     return date[:4] 
+
 def load_data(catalog, filename):
     movies = csv.DictReader(open(".\\Data\\Challenge-2\\"+filename, encoding='utf-8'))
     
@@ -80,19 +83,9 @@ def load_data(catalog, filename):
             mp.put(catalog['ordenado_año'], año, lista_año)
         else: 
             lt.add_last(movies_in_anio, rta)
-        
-        
-        
-        
-        
-
-                    
+                       
     return catalog
         
-    
-        
-        
-
 # Funciones de consulta sobre el catálogo
 
 def get_data(catalog, id):
@@ -103,26 +96,102 @@ def get_data(catalog, id):
     pass
 
 
-def req_1(catalog):
+def req_1(catalog, idioma, movie_title):
     """
     Retorna el resultado del requerimiento 1
     """
-    # TODO: Modificar el requerimiento 1
-    pass
+    entry = mp.get(catalog['ordenado_idioma'], idioma)
+    
+    if entry is None:
+        return "Ninguna película fue encontrada"
+    
+    movies_in_language = entry['elements']
+    
+    for movie in movies_in_language:
+        if movie['title'].lower() == movie_title.lower():
+                       
+            net_profit = None
+            if float(movie["revenue"]) != 0 and float(movie["budget"]) != 0:
+                net_profit = float(movie["revenue"]) - float(movie["budget"])
+            
+            respuesta = {
+                "Título original": movie['title'],
+                "Duración (minutos)": movie['runtime'],
+                "Fecha de publicación": movie['release_date'],
+                "Presupuesto": movie['budget'],
+                "Dinero recaudado": movie['revenue'],
+                "Ganancia": net_profit,
+                "Puntaje de calificación": movie['vote_average'],
+                "Idioma original": movie['original_language']
+            }
+            return respuesta
 
-
-def req_2(catalog):
+def req_2(catalog, n, idioma):
     """
     Retorna el resultado del requerimiento 2
     """
-    # TODO: Modificar el requerimiento 2
-    pass
 
-def fecha_str_a_fecha_dias(date):
-    año=float(date[:4])
-    mes=float(date[5:7])
-    dias=float(date[8:])
-    return (año*365)+(mes*30)+(dias)
+    movies_in_language_entry = mp.get(catalog['ordenado_idioma'], idioma)
+
+    if movies_in_language_entry is None:
+        return {
+            "total_movies": 0,
+            "movies": []
+        }
+
+    movie_list = movies_in_language_entry['elements']
+
+    movie_list_released = [movie for movie in movie_list if movie['status'] == 'Released']
+    total_movies = len(movie_list_released)
+    
+    if total_movies == 0:
+        return {
+            "total_movies": 0,
+            "movies": []
+        }
+    lo = 0
+    hi = total_movies - 1
+    stack = [(lo, hi)]
+
+    while stack:
+        lo, hi = stack.pop()
+        if lo < hi:
+            pivot = movie_list_released[hi]
+            i = lo - 1
+            for j in range(lo, hi):
+                if movie_list_released[j]['release_date'] > pivot['release_date']:
+                    i += 1
+                    movie_list_released[i], movie_list_released[j] = movie_list_released[j], movie_list_released[i]
+            i += 1
+            movie_list_released[i], movie_list_released[hi] = movie_list_released[hi], movie_list_released[i]
+            stack.append((lo, i - 1))
+            stack.append((i + 1, hi))
+    n = min(n, total_movies)
+    resultado = {
+        "total_movies": total_movies,
+        "movies": []
+    }
+    
+    for i in range(n):
+        movie = movie_list_released[i]   
+        budget = movie['budget'] if movie['budget'] else "Undefined"
+        revenue = movie['revenue'] if movie['revenue'] else "Undefined"
+        profit = None
+        if budget != "Undefined" and revenue != "Undefined":
+            profit = float(revenue) - float(budget)
+        
+        resultado['movies'].append({
+            "release_date": movie['release_date'],
+            "original_title": movie['title'],
+            "budget": movie['budget'],
+            "revenue": movie['revenue'],
+            "profit": profit,
+            "runtime": movie['runtime'],
+            "vote_average": movie['vote_average']
+        })
+    
+    return resultado
+
 def req_3(catalog,idioma,fecha_ini,fecha_final):
     lista=mp.get(catalog["ordenado_idioma"],idioma)
     
@@ -148,12 +217,6 @@ def req_3(catalog,idioma,fecha_ini,fecha_final):
         new_dic["tiempo_prom"]="no hay ninguna pelicula para promediar"
     return new_dic
     
-
-
-
-
-    
-
 def req_4(catalog):
     """
     Retorna el resultado del requerimiento 4
