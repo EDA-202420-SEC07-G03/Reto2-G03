@@ -226,20 +226,132 @@ def req_4(catalog):
     # TODO: Modificar el requerimiento 4
     pass
 
+def compare_dates(pelicula1,pelicula2):
+    fecha1 = time.strptime(pelicula1["release_date"], "%Y-%m-%d")
+    fecha2 = time.strptime(pelicula2["release_date"], "%Y-%m-%d")
+    
+    return fecha1 > fecha2
 
-def req_5(catalog):
-    """
-    Retorna el resultado del requerimiento 5
-    """
-    # TODO: Modificar el requerimiento 5
-    pass
 
-def req_6(catalog):
+def req_5(catalog, rango_presupuesto, fecha_inicial, fecha_final):
+    """
+    Retorna el resultado del requerimiento 5.
+    """
+    filtro_presupuesto = lt.new_list()
+
+    
+    rango_inferior, rango_superior = map(int, rango_presupuesto.split('-'))
+
+    
+    for pelicula in catalog['movies']['elements']:
+        if pelicula['budget'] is not None and pelicula['budget'] != "0":
+            presupuesto = int(pelicula['budget'])
+            
+            if rango_inferior <= presupuesto <= rango_superior:
+                lt.add_last(filtro_presupuesto, pelicula)
+
+    
+    fecha_inicial_mod = time.strptime(fecha_inicial, "%Y-%m-%d")
+    fecha_final_mod = time.strptime(fecha_final, "%Y-%m-%d")
+
+    filtro_final = lt.new_list()
+
+    for elemento in filtro_presupuesto['elements']:
+        if elemento['status'] == "Released":
+            fecha = time.strptime(elemento["release_date"], "%Y-%m-%d")
+            if fecha_inicial_mod <= fecha <= fecha_final_mod:
+                lt.add_last(filtro_final, elemento)
+
+    filtro_final = lt.quick_sort(filtro_final, compare_dates)
+
+    for movie in filtro_final['elements']:
+        if movie['budget'] is None or movie['revenue'] is None or movie['budget'] == "0" or movie['revenue'] == "0":
+            movie['net_profit'] = "Undefined"
+        else:
+            movie['net_profit'] = float(movie['revenue']) - float(movie['budget'])
+
+    return filtro_final
+
+
+
+            
+
+def req_6(catalog, idioma, año_inicial, año_final):
     """
     Retorna el resultado del requerimiento 6
     """
-    # TODO: Modificar el requerimiento 6
-    pass
+    
+    peliculas_idioma = mp.get(catalog['ordenado_idioma'], idioma)
+    
+    if peliculas_idioma is None:
+        print("No se encontraron películas para el idioma " + idioma )
+        return None
+     
+    
+    estadisticas_por_año = {}
+    
+    for pelicula in peliculas_idioma['elements']:
+        año_pelicula = time.strptime(pelicula["release_date"], "%Y-%m-%d").tm_year
+        
+        if int(año_inicial) <= año_pelicula <= int(año_final) and pelicula['status'] == "Released":
+            
+            if año_pelicula not in estadisticas_por_año:
+                estadisticas_por_año[año_pelicula] = {
+                    "total_peliculas": 0,
+                    "total_votacion": 0,
+                    "total_runtime": 0,
+                    "total_ganancias": 0,
+                    "mejor_pelicula": None,
+                    "peor_pelicula": None,
+                    "mejor_votacion": 0,
+                    "peor_votacion": float('inf')
+                }
+            
+            datos = estadisticas_por_año[año_pelicula]
+            datos["total_peliculas"] += 1
+            datos["total_votacion"] += float(pelicula['vote_average'])
+            datos["total_runtime"] += float(pelicula['runtime']) if pelicula['runtime'] else 0
+            
+            if pelicula['budget'] != "0" and pelicula['revenue'] != "0":
+                ganancias = float(pelicula['revenue']) - float(pelicula['budget'])
+                datos["total_ganancias"] += ganancias
+            
+            if float(pelicula['vote_average']) > datos["mejor_votacion"]:
+                datos["mejor_pelicula"] = pelicula['title']
+                datos["mejor_votacion"] = float(pelicula['vote_average'])
+            
+            if float(pelicula['vote_average']) < datos["peor_votacion"]:
+                datos["peor_pelicula"] = pelicula['title']
+                datos["peor_votacion"] = float(pelicula['vote_average'])
+    
+    resultado = lt.new_list()
+    for año, datos in estadisticas_por_año.items():
+        if datos["total_peliculas"] > 0:
+            promedio_votacion = datos["total_votacion"] / datos["total_peliculas"]
+            promedio_runtime = datos["total_runtime"] / datos["total_peliculas"]
+            
+            lt.add_last(resultado,{
+                "año": año,
+                "total_peliculas": datos["total_peliculas"],
+                "promedio_votacion": promedio_votacion,
+                "promedio_runtime": promedio_runtime,
+                "total_ganancias": datos["total_ganancias"],
+                "mejor_pelicula": datos["mejor_pelicula"],
+                "mejor_votacion": datos["mejor_votacion"],
+                "peor_pelicula": datos["peor_pelicula"],
+                "peor_votacion": datos["peor_votacion"]
+            })
+    
+    
+    resultado = lt.quick_sort(resultado, compare_years)
+    
+    return resultado
+
+def compare_years(year_data1, year_data2):
+    
+    return year_data1['año'] > year_data2['año']
+
+    
 
 def is_name_in_list(name, company_list):
     for company in company_list:
@@ -317,3 +429,7 @@ def delta_time(start, end):
     """
     elapsed = float(end - start)
     return elapsed
+
+
+
+

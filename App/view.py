@@ -54,25 +54,9 @@ def load_data(control):
     
     print("Se han cargado " + str(movies['movies']['size']) + " películas en la lista.")
     print("Se han cargado " + str(total_movies) + " películas en la tabla.")
-    print(lt.size(movies['ordenado_idioma']["table"]))
-    print(str(total_no))
     print("Se han cargado " + str(total_movies2) + " películas en la tabla 2.")
-    print(lt.size(movies['ordenado_año']["table"]))
-    print(str(total_años))
     
-    list=[]
-    for i in range(0,lt.size(movies["movies"])):
-       if movies["movies"]["elements"][i]["release_date"][:4] not in list:
-           list.append(movies["movies"]["elements"][i]["release_date"][:4])
-    print(len(list))
-    """"
-    d=[]
-    for i in range(0,lt.size(movies["movies"])):
-       for j in range(0,lt.size(movies["movies"]["elements"][i]["production_companies"])):
-        if movies["movies"]["elements"][i]["production_companies"]["elements"][j]["name"] not in d:
-           d.append(movies["movies"]["elements"][i]["production_companies"]["elements"][j]["name"])
-    print(len(d))
-    """
+    
 
 def print_data(control, id):
     """
@@ -146,16 +130,37 @@ def print_req_5(control):
     """
         Función que imprime la solución del Requerimiento 5 en consola
     """
-    # TODO: Imprimir el resultado del requerimiento 5
-    pass
+    rango_presupuesto = input("Ingrese el rango de presupuesto que desea consultar: ")
+    fecha_inicial = input("Ingrese la fecha inicial (formato YYYY-MM-DD): ") 
+    fecha_final = input("Ingrese la fecha inicial (formato YYYY-MM-DD): ")
+    rta = logic.req_5(control,rango_presupuesto,fecha_inicial,fecha_final)
+    print("La cantidad de peliculas que cumplen el criterio de busqueda son " + str(rta['size']))
+    divisor = 0
+    presupuesto = 0
+    for elemento in rta['elements']:
+        presupuesto += int(elemento['budget'])
+        divisor += 1
+    presupuesto_prom = presupuesto/divisor
+    print("El presupuesto promedio de las películas es de: " + str(round(presupuesto_prom,3)))
+    
+    if rta["size"] > 20:
+        print("Las primeras 10 peliculas son: ")
+        print(rta["elements"][0:10])
+    else:
+        print(rta)
+    
 
 
 def print_req_6(control):
     """
         Función que imprime la solución del Requerimiento 6 en consola
     """
-    # TODO: Imprimir el resultado del requerimiento 6
-    pass
+    idioma = input("Ingrese el idioma que desea consultar: ")
+    año_inicial = input("Ingrese el año inicial: ") 
+    año_final = input("Ingrese el año: ")
+    rta = logic.req_6(control,idioma,año_inicial,año_final)
+    print(rta)
+    
 
 
 def print_req_7(sol):
