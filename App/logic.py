@@ -124,24 +124,22 @@ def fecha_str_a_fecha_dias(date):
     dias=float(date[8:])
     return (año*365)+(mes*30)+(dias)
 def req_3(catalog,idioma,fecha_ini,fecha_final):
-    posicion_hash=None
-    for i in range(0,lt.size(catalog["ordenado_idioma"]["table"])):
-        if idioma == catalog["ordenado_idioma"]["table"]["elements"][i]["key"]:
-            posicion_hash=i
+    lista=mp.get(catalog["ordenado_idioma"],idioma)
+    
     fecha_i=fecha_str_a_fecha_dias(fecha_ini)
     fecha_f=fecha_str_a_fecha_dias(fecha_final)
     dic={}
     total=0
     tiempo_prom=0
-    for j in range(0,len(catalog["ordenado_idioma"]["table"]["elements"][posicion_hash]["value"]["elements"])):
-        if fecha_str_a_fecha_dias(catalog["ordenado_idioma"]["table"]["elements"][posicion_hash]["value"]["elements"][j]["release_date"])>=fecha_i and fecha_str_a_fecha_dias(catalog["ordenado_idioma"]["table"]["elements"][posicion_hash]["value"]["elements"][j]["release_date"])<= fecha_f:
+    for j in range(0,lt.size(lista)):
+        if fecha_str_a_fecha_dias(lista["elements"][j]["release_date"])>=fecha_i and fecha_str_a_fecha_dias(lista["elements"][j]["release_date"])<= fecha_f:
             total+=1
-            tiempo_prom+=float(catalog["ordenado_idioma"]["table"]["elements"][posicion_hash]["value"]["elements"][j]["runtime"])
-            if fecha_str_a_fecha_dias(catalog["ordenado_idioma"]["table"]["elements"][posicion_hash]["value"]["elements"][j]["release_date"]) not in dic:
-                catalog["ordenado_idioma"]["table"]["elements"][posicion_hash]["value"]["elements"][j]["net_profit"]="undefined"
-                if float(catalog["ordenado_idioma"]["table"]["elements"][posicion_hash]["value"]["elements"][j]["revenue"])!=0 and float(catalog["ordenado_idioma"]["table"]["elements"][posicion_hash]["value"]["elements"][j]["budget"])!=0:
-                    catalog["ordenado_idioma"]["table"]["elements"][posicion_hash]["value"]["elements"][j]["net_profit"]=float(catalog["ordenado_idioma"]["table"]["elements"][posicion_hash]["value"]["elements"][j]["revenue"])-float(catalog["ordenado_idioma"]["table"]["elements"][posicion_hash]["value"]["elements"][j]["budget"])
-                dic[fecha_str_a_fecha_dias(catalog["ordenado_idioma"]["table"]["elements"][posicion_hash]["value"]["elements"][j]["release_date"])]=catalog["ordenado_idioma"]["table"]["elements"][posicion_hash]["value"]["elements"][j]
+            tiempo_prom+=float(lista["elements"][j]["runtime"])
+            if fecha_str_a_fecha_dias(lista["elements"][j]["release_date"]) not in dic:
+                lista["elements"][j]["net_profit"]="undefined"
+                if float(lista["elements"][j]["revenue"])!=0 and float(lista["elements"][j]["budget"])!=0:
+                    lista["elements"][j]["net_profit"]=float(lista["elements"][j]["revenue"])-float(lista["elements"][j]["budget"])
+                dic[fecha_str_a_fecha_dias(lista["elements"][j]["release_date"])]=lista["elements"][j]
     new_dic=dict(sorted(dic.items()))
     new_dic["total"]=total
     if total!=0:
