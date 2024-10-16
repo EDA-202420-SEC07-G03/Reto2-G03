@@ -18,7 +18,6 @@ def new_logic():
     catalog["movies"] = lt.new_list()
     catalog["ordenado_idioma"] = mp.new_map(89,1)
     catalog["ordenado_año"]=mp.new_map(135,1)
-    catalog["ordenado_product"]=mp.new_map(135,1)
     return catalog
  
 
