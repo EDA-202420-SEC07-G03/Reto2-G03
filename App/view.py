@@ -3,6 +3,8 @@ from App import logic as logic
 from itertools import islice
 from DataStructures.List import array_list as lt
 from DataStructures.Map import map_linear_probing as mp
+from tabulate import tabulate
+
 
 default_limit = 1000
 sys.setrecursionlimit(default_limit*10)
@@ -55,6 +57,10 @@ def load_data(control):
     print("Se han cargado " + str(movies['movies']['size']) + " películas en la lista.")
     print("Se han cargado " + str(total_movies) + " películas en la tabla.")
     print("Se han cargado " + str(total_movies2) + " películas en la tabla 2.")
+    print("Las primeras 5 peliculas son: ")
+    print(control['movies']['elements'][0:5])
+    print("Las últimas 5 películas son: ")
+    print(control['movies']['elements'][-5:])
     
     
 
@@ -62,8 +68,10 @@ def print_data(control, id):
     """
         Función que imprime un dato dado su ID
     """
-    #TODO: Realizar la función para imprimir un elemento
-    pass
+    id = input("Ingrese el ID de la película que desea consultar: ")
+    rta = logic.get_data(control,id)
+    print("La pelicula correspondiente es: ")
+    print(rta)
 
 def print_req_1(control, idioma, movie_title):
     """
