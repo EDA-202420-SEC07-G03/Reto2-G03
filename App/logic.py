@@ -20,8 +20,6 @@ def new_logic():
     catalog["ordenado_año"]=mp.new_map(135,1)
     return catalog
  
-
-# Funciones para la carga de datos
 def fecha_str_a_fecha_dias(date):
     año=float(date[:4])
     mes=float(date[5:7])
@@ -31,6 +29,22 @@ def fecha_str_a_fecha_dias(date):
 def get_anio(date):
     return date[:4] 
 
+# Funciones para medir tiempos de ejecucion
+def get_time():
+    """
+    devuelve el instante tiempo de procesamiento en milisegundos
+    """
+    return float(time.perf_counter()*1000)
+
+
+def delta_time(start, end):
+    """
+    devuelve la diferencia entre tiempos de procesamiento muestreados
+    """
+    elapsed = float(end - start)
+    return elapsed
+
+# Funciones para la carga de datos
 def load_data(catalog, filename):
     movies = csv.DictReader(open(".\\Data\\Challenge-2\\"+filename, encoding='utf-8'))
     
@@ -84,6 +98,14 @@ def load_data(catalog, filename):
             lt.add_last(movies_in_anio, rta)
                        
     return catalog
+
+'''
+catalog = new_logic()
+        
+init_time = get_time()
+load_data(catalogo, "movies-large.csv")        
+fisin_time = get_time()
+print(delta_time(init_time, fisin_time))'''
         
 # Funciones de consulta sobre el catálogo
 
@@ -97,6 +119,13 @@ def get_data(catalog, id):
         else:
             return "no se encontro"
 
+'''
+catalog = new_logic()
+        
+init_time = get_time()
+get_data(catalogo, id)        
+fisin_time = get_time()
+print(delta_time(init_time, fisin_time))'''
 
 def req_1(catalog, idioma, movie_title):
     """
@@ -128,11 +157,21 @@ def req_1(catalog, idioma, movie_title):
             }
             return respuesta
 
+'''
+idioma = ''
+movie_title = ''
+catalog = new_logic()
+        
+init_time = get_time()
+req_1(catalog, idioma, movie_title)        
+fisin_time = get_time()
+print(delta_time(init_time, fisin_time))'''
+
 def req_2(catalog, n, idioma):
+    
     """
     Retorna el resultado del requerimiento 2
     """
-
     movies_in_language_entry = mp.get(catalog['ordenado_idioma'], idioma)
 
     if movies_in_language_entry is None:
@@ -142,7 +181,6 @@ def req_2(catalog, n, idioma):
         }
 
     movie_list = movies_in_language_entry['elements']
-
     movie_list_released = [movie for movie in movie_list if movie['status'] == 'Released']
     total_movies = len(movie_list_released)
     
@@ -151,31 +189,23 @@ def req_2(catalog, n, idioma):
             "total_movies": 0,
             "movies": []
         }
-    lo = 0
-    hi = total_movies - 1
-    stack = [(lo, hi)]
+    
+    recent_movies = []
+    for movie in movie_list_released:
+        if len(recent_movies) < n:
+            recent_movies.append(movie)
+            recent_movies.sort(key=lambda x: x['release_date'], reverse=True)
+        else:
+            if movie['release_date'] > recent_movies[-1]['release_date']:
+                recent_movies[-1] = movie
+                recent_movies.sort(key=lambda x: x['release_date'], reverse=True)
 
-    while stack:
-        lo, hi = stack.pop()
-        if lo < hi:
-            pivot = movie_list_released[hi]
-            i = lo - 1
-            for j in range(lo, hi):
-                if movie_list_released[j]['release_date'] > pivot['release_date']:
-                    i += 1
-                    movie_list_released[i], movie_list_released[j] = movie_list_released[j], movie_list_released[i]
-            i += 1
-            movie_list_released[i], movie_list_released[hi] = movie_list_released[hi], movie_list_released[i]
-            stack.append((lo, i - 1))
-            stack.append((i + 1, hi))
-    n = min(n, total_movies)
     resultado = {
         "total_movies": total_movies,
         "movies": []
     }
     
-    for i in range(n):
-        movie = movie_list_released[i]   
+    for movie in recent_movies:
         budget = movie['budget'] if movie['budget'] else "Undefined"
         revenue = movie['revenue'] if movie['revenue'] else "Undefined"
         profit = None
@@ -193,6 +223,16 @@ def req_2(catalog, n, idioma):
         })
     
     return resultado
+
+'''
+idioma = ''
+n = 
+catalog = new_logic()
+       
+init_time = get_time()
+req_2(catalog, n, idioma)        
+fisin_time = get_time()
+print(delta_time(init_time, fisin_time))'''
 
 def req_3(catalog,idioma,fecha_ini,fecha_final):
     lista=mp.get(catalog["ordenado_idioma"],idioma)
@@ -218,20 +258,88 @@ def req_3(catalog,idioma,fecha_ini,fecha_final):
     else:
         new_dic["tiempo_prom"]="no hay ninguna pelicula para promediar"
     return new_dic
+
+'''
+idioma = ''
+fecha_ini = ''
+fecha_final = ''
+catalog = new_logic()   
+     
+init_time = get_time()
+req_3(catalog,idioma,fecha_ini,fecha_final)        
+fisin_time = get_time()
+print(delta_time(init_time, fisin_time))'''
+  
+def req_4(catalog, estado, fecha_inicial, fecha_final):
+    """
+    Retorna el resultado del requerimiento 4 basado en el estado de producción y rango de fechas.
+    """
+    peliculas_filtradas = lt.new_list()
+    fecha_inicial = fecha_str_a_fecha_dias(fecha_inicial)
+    fecha_final = fecha_str_a_fecha_dias(fecha_final)
+
+    for i in range(lt.size(catalog['movies'])):
+        movie = lt.get_element(catalog['movies'], i)
+        fecha_pelicula = fecha_str_a_fecha_dias(movie['release_date'])
+        if movie['status'] == estado and fecha_inicial <= fecha_pelicula <= fecha_final:
+            lt.add_last(peliculas_filtradas, movie)
+
+    num_peliculas = lt.size(peliculas_filtradas)
+    if num_peliculas == 0:
+        return {'total_peliculas': 0, 'mensaje': 'No hay peliculas que cumplan los criterios'}
+
+    total_duracion = 0
+    for i in range(lt.size(peliculas_filtradas)):
+        movie = lt.get_element(peliculas_filtradas, i)
+        duracion = movie['runtime']
+        if duracion and duracion != '':
+            total_duracion += float(duracion)
+
+    tiempo_promedio = total_duracion / num_peliculas if num_peliculas > 0 else 0
+    lt.merge_sort(peliculas_filtradas, lambda x, y: fecha_str_a_fecha_dias(x['release_date']) > fecha_str_a_fecha_dias(y['release_date']))
+    peliculas_mostradas = lt.sub_list(peliculas_filtradas, 0, min(10, num_peliculas))
     
-def req_4(catalog):
-    """
-    Retorna el resultado del requerimiento 4
-    """
-    # TODO: Modificar el requerimiento 4
-    pass
+    respuesta = {
+        "total_peliculas": num_peliculas,
+        "tiempo_promedio_duracion": tiempo_promedio,
+        "peliculas": []
+    }
+
+    for i in range(lt.size(peliculas_mostradas)):
+        movie = lt.get_element(peliculas_mostradas, i)
+        presupuesto = movie['budget'] if movie['budget'] != '' else None
+        recaudado = movie['revenue'] if movie['revenue'] != '' else None
+        ganancia = None if presupuesto is None or recaudado is None else float(recaudado) - float(presupuesto)
+        
+        respuesta["peliculas"].append({
+            "release_date": movie['release_date'],
+            "original_title": movie['title'],
+            "budget": presupuesto,
+            "revenue": recaudado,
+            "profit": ganancia,
+            "runtime": movie['runtime'],
+            "vote_average": movie['vote_average'],
+            "original_language": movie['original_language']
+        })
+
+    return respuesta
+
+'''
+estado = ''
+fecha_inicial= ''
+fecha_final = ''
+catalog = new_logic()
+        
+init_time = get_time()
+req_4(catalog, estado, fecha_inicial, fecha_final)        
+fisin_time = get_time()
+print(delta_time(init_time, fisin_time))'''
 
 def compare_dates(pelicula1,pelicula2):
     fecha1 = time.strptime(pelicula1["release_date"], "%Y-%m-%d")
     fecha2 = time.strptime(pelicula2["release_date"], "%Y-%m-%d")
     
     return fecha1 > fecha2
-
 
 def req_5(catalog, rango_presupuesto, fecha_inicial, fecha_final):
     """
@@ -272,9 +380,16 @@ def req_5(catalog, rango_presupuesto, fecha_inicial, fecha_final):
 
     return filtro_final
 
+'''
+#rango_presupuesto = ''
+#fecha_inicial= ''
+#fecha_final = ''
+#catalog = new_logic()
 
-
-            
+#init_time = get_time()
+#req_5(catalog, rango_presupuesto, fecha_inicial, fecha_final)        
+#fisin_time = get_time()
+#print(delta_time(init_time, fisin_time))'''
 
 def req_6(catalog, idioma, año_inicial, año_final):
     """
@@ -286,7 +401,6 @@ def req_6(catalog, idioma, año_inicial, año_final):
     if peliculas_idioma is None:
         print("No se encontraron películas para el idioma " + idioma )
         return None
-     
     
     estadisticas_por_año = {}
     
@@ -347,17 +461,27 @@ def req_6(catalog, idioma, año_inicial, año_final):
     
     return resultado
 
+'''
+idioma= ''
+año_inicial =
+año_final =
+catalog = new_logic()
+       
+init_time = get_time()
+req_6(catalog, idioma, año_inicial, año_final)        
+fisin_time = get_time()
+print(delta_time(init_time, fisin_time))'''
+
 def compare_years(year_data1, year_data2):
     
     return year_data1['año'] > year_data2['año']
-
-    
 
 def is_name_in_list(name, company_list):
     for company in company_list:
         if company['name'] == name:
             return True
     return False
+
 def req_7(catalog,productora,inicial,final):
 
     """
@@ -402,9 +526,16 @@ def req_7(catalog,productora,inicial,final):
         i+=1
     return estadistica_final
 
+'''
+productora= 'RM Films International'
+inicial = fecha_str_a_fecha_dias('2015-08-19')
+final = fecha_str_a_fecha_dias('2016-11-23')
+catalog = new_logic()        
 
-
- 
+init_time = get_time()
+req_7(catalog,productora,inicial,final)        
+fisin_time = get_time()
+print(delta_time(init_time, fisin_time))'''
 
 def req_8(catalog):
     """
@@ -412,24 +543,3 @@ def req_8(catalog):
     """
     # TODO: Modificar el requerimiento 8
     pass
-
-
-# Funciones para medir tiempos de ejecucion
-
-def get_time():
-    """
-    devuelve el instante tiempo de procesamiento en milisegundos
-    """
-    return float(time.perf_counter()*1000)
-
-
-def delta_time(start, end):
-    """
-    devuelve la diferencia entre tiempos de procesamiento muestreados
-    """
-    elapsed = float(end - start)
-    return elapsed
-
-
-
-

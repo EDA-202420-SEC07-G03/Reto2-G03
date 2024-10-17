@@ -72,7 +72,7 @@ def print_req_1(control, idioma, movie_title):
     resultado = logic.req_1(control, idioma, movie_title)
     
     if isinstance(resultado, dict):
-        print("\nInformación de la película encontrada:")
+        print("\nInformacion de la pelicula encontrada: ")
         for key, value in resultado.items():
             print(f"{key}: {value}")
     else:
@@ -83,7 +83,7 @@ def print_req_2(control, n , idioma):
         Función que imprime la solución del Requerimiento 2 en consola
     """
     if not n.isnumeric() or int(n) <= 0:
-        print("Ingrese un número válido para 'n'.")
+        print("Ingrese el numero de peliculas a listar")
         return
 
     n = int(n)
@@ -91,10 +91,10 @@ def print_req_2(control, n , idioma):
     resultado = logic.req_2(control, n, idioma)
 
     total_movies = resultado['total_movies']
-    print(f"\nEl total de películas publicadas en '{idioma}': {total_movies}")
+    print(f"\nEl total de películas publicadas en '{idioma}' es de: {total_movies}")
 
     if total_movies > 0:
-        print("\nÚltimas películas publicadas:")
+        print("\nÚltimas películas publicadas: ")
         for movie in resultado['movies']:
             print(f"Fecha de publicación: {movie['release_date']}")
             print(f"Título original: {movie['original_title']}")
@@ -104,7 +104,7 @@ def print_req_2(control, n , idioma):
             print(f"Duración: {movie['runtime']} minutos")
             print(f"Puntaje de calificación: {movie['vote_average']}")
     else:
-        print("No hay películas disponibles para mostrar.")
+        print("No hay películas que cumplan estos requisitos.")
 
 def print_req_3(sol):
     lista=list(sol.items())
@@ -118,13 +118,29 @@ def print_req_3(sol):
     print(" el total de peliculas es " + str(sol["total"]))
     print(" el tiempo  promedio de las peliculas es " + str(sol["tiempo_prom"]))
 
-def print_req_4(control):
+def print_req_4(control, estado, fecha_inicial, fecha_final):
     """
         Función que imprime la solución del Requerimiento 4 en consola
     """
-    # TODO: Imprimir el resultado del requerimiento 4
-    pass
+    resultado = logic.req_4(control, estado, fecha_inicial, fecha_final)
 
+    if isinstance(resultado, str):
+        print(resultado)
+    else:
+        print(f"El total de peliculas encontradas: {resultado['total_peliculas']}")
+        print(f"Tiempo promedio de duracion: {resultado['tiempo_promedio_duracion']:.2f} minutos")
+        
+        print("\nPelículas encontradas en orden cronológico de publicación:")
+        for movie in resultado['peliculas']:
+            print(f"Fecha de publicación: {movie['release_date']}")
+            print(f"Título original: {movie['original_title']}")
+            print(f"Presupuesto: {movie['budget']}")
+            print(f"Recaudación: {movie['revenue']}")
+            print(f"Ganancia: {movie['profit']}")
+            print(f"Duración: {movie['runtime']} minutos")
+            print(f"Puntaje de calificación: {movie['vote_average']}")
+            print(f"Idioma original: {movie['original_language']}")
+            print("-" * 40)
 
 def print_req_5(control):
     """
@@ -192,25 +208,29 @@ def main():
         if int(inputs) == 1:
             print("Cargando información de los archivos ....\n")
             data = load_data(control)
+            
         elif int(inputs) == 2:
             idioma = input('Ingrese el idioma que quiere buscar: ')
             movie_title = input('Ingrese la pelicula que quiere ver: ')
             print_req_1(control, idioma, movie_title)
 
         elif int(inputs) == 3:
-            n = input('Ingrese el total de peliculas que quiere: ')
+            n = input('Ingrese el total de peliculas que quiere a listar: ')
             idioma = input('Ingrese el idioma que quiere buscar: ')
             print_req_2(control, n, idioma)
 
         elif int(inputs) == 4:
-            fecha_inf=input("ingrese el limite inferior de fecha: ")
-            fecha_sup=input("ingrese el limite superior de fecha: ")
-            idioma= input("ingrese la productora de la pelicula: ")
+            fecha_inf=input("Ingrese el limite inferior de fecha: ")
+            fecha_sup=input("Ingrese el limite superior de fecha: ")
+            idioma= input("Ingrese la productora de la pelicula: ")
             sol=logic.req_3(control,idioma,fecha_inf,fecha_sup)
             print_req_3(sol)
 
         elif int(inputs) == 5:
-            print_req_4(control)
+            estado = input('Ingrese el estado de la pelicula (“Released”, “Rumored”, etc): ')
+            fecha_inicial = input('Ingrese la fecha inicial del periodo a consultar (en formato YYYY-MM-DD): ')
+            fecha_final = input('Ingrese la fecha final del periodo a consultar (en formato YYYY-MM-DD): ')
+            print_req_4(control, estado, fecha_inicial, fecha_final)
 
         elif int(inputs) == 6:
             print_req_5(control)
