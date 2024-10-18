@@ -258,7 +258,16 @@ def req_3(catalog,idioma,fecha_ini,fecha_final):
     else:
         new_dic["tiempo_prom"]="no hay ninguna pelicula para promediar"
     return new_dic
-
+""""
+idioma ="en"
+fecha_ini = '2001-01-01'
+fecha_final = '2018-01-01'
+catalog = new_logic()   
+     
+init_time = get_time()
+req_3(catalog,idioma,fecha_ini,fecha_final)        
+fisin_time = get_time()
+print(delta_time(init_time, fisin_time))
 '''
 idioma = ''
 fecha_ini = ''
@@ -269,7 +278,7 @@ init_time = get_time()
 req_3(catalog,idioma,fecha_ini,fecha_final)        
 fisin_time = get_time()
 print(delta_time(init_time, fisin_time))'''
-  
+"""
 def req_4(catalog, estado, fecha_inicial, fecha_final):
     """
     Retorna el resultado del requerimiento 4 basado en el estado de producción y rango de fechas.
@@ -487,7 +496,7 @@ def req_7(catalog,productora,inicial,final):
     """
     Retorna el resultado del requerimiento 7
     """
-    lista=mp.get(catalog["ordenado_año"],productora)
+    
     estadistica={}
     d=int(inicial)
     while d <= int(final):

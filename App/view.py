@@ -3,7 +3,7 @@ from App import logic as logic
 from itertools import islice
 from DataStructures.List import array_list as lt
 from DataStructures.Map import map_linear_probing as mp
-
+import time
 
 
 default_limit = 1000
@@ -231,8 +231,12 @@ def main():
             fecha_inf=input("Ingrese el limite inferior de fecha: ")
             fecha_sup=input("Ingrese el limite superior de fecha: ")
             idioma= input("Ingrese el idioma de la pelicula: ")
+            init_time = logic.get_time()
             sol=logic.req_3(control,idioma,fecha_inf,fecha_sup)
+            fisin_time = logic.get_time()
+            print(logic.delta_time(init_time, fisin_time))
             print_req_3(sol)
+            
 
         elif int(inputs) == 5:
             estado = input('Ingrese el estado de la pelicula (“Released”, “Rumored”, etc): ')
