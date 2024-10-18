@@ -20,11 +20,7 @@ def new_logic():
     catalog["ordenado_año"]=mp.new_map(135,1)
     return catalog
  
-def fecha_str_a_fecha_dias(date):
-    año=float(date[:4])
-    mes=float(date[5:7])
-    dias=float(date[8:])
-    return (año*365)+(mes*30)+(dias)
+
 
 def get_anio(date):
     return date[:4] 
@@ -233,7 +229,11 @@ init_time = get_time()
 req_2(catalog, n, idioma)        
 fisin_time = get_time()
 print(delta_time(init_time, fisin_time))'''
-
+def fecha_str_a_fecha_dias(date):
+    año=float(date[:4])
+    mes=float(date[5:7])
+    dias=float(date[8:])
+    return (año*365)+(mes*30)+(dias)
 def req_3(catalog,idioma,fecha_ini,fecha_final):
     lista=mp.get(catalog["ordenado_idioma"],idioma)
     

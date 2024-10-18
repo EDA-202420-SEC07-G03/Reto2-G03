@@ -230,7 +230,7 @@ def main():
         elif int(inputs) == 4:
             fecha_inf=input("Ingrese el limite inferior de fecha: ")
             fecha_sup=input("Ingrese el limite superior de fecha: ")
-            idioma= input("Ingrese la productora de la pelicula: ")
+            idioma= input("Ingrese el idioma de la pelicula: ")
             sol=logic.req_3(control,idioma,fecha_inf,fecha_sup)
             print_req_3(sol)
 
