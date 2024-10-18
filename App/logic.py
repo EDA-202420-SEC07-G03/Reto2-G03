@@ -228,7 +228,7 @@ def req_2(catalog, n, idioma):
 idioma = ''
 n = 
 catalog = new_logic()
-       
+        
 init_time = get_time()
 req_2(catalog, n, idioma)        
 fisin_time = get_time()
@@ -487,42 +487,50 @@ def req_7(catalog,productora,inicial,final):
     """
     Retorna el resultado del requerimiento 7
     """
+    lista=mp.get(catalog["ordenado_año"],productora)
     estadistica={}
-    for i in range(0,lt.size(catalog["movies"])):
-        for j in range(0,lt.size(catalog["movies"]["elements"][i]["production_companies"])):
-         if str(catalog["movies"]["elements"][i]["production_companies"]["elements"][j]["name"])==productora and int(catalog["movies"]["elements"][i]["release_date"][:4]) >= int(inicial) and int(catalog["movies"]["elements"][i]["release_date"][:4]) <= int(final): 
-                     año = catalog["movies"]["elements"][i]["release_date"][:4]
-                     if año not in estadistica:
-                        estadistica[año] = {
+    d=int(inicial)
+    while d <= int(final):
+        lista=mp.get(catalog["ordenado_año"],str(d))
+        d+=1
+        for k in range(0,lt.size(lista)):
+         for j in range(0,lt.size(lista["elements"][k]["production_companies"])):
+          if str(lista["elements"][k]["production_companies"]["elements"][j]["name"])==productora : 
+                     i=d-1
+                    
+                     if i not in estadistica:
+                        estadistica[i] = {
                         'total': 0,'votacion_prom': 0,'duracion_prom': 0,'net_profit': 0,
                         'mejor_peli': ("", float("-inf")),'peor_peli': ("", float("inf"))}
-                     estadistica[año]['total'] += 1
-                     estadistica[año]['votacion_prom'] += float(catalog["movies"]["elements"][i]["vote_average"])
-                     estadistica[año]['duracion_prom'] += float(catalog["movies"]["elements"][i]["runtime"])
-                     if ((catalog["movies"]["elements"][i]["revenue"]) or(catalog["movies"]["elements"][i]["budget"]))=="0":
+                     estadistica[i]['total'] += 1
+                     estadistica[i]['votacion_prom'] += float(lista["elements"][k]["vote_average"])
+                     estadistica[i]['duracion_prom'] += float(lista["elements"][k]["runtime"])
+                     if ((lista["elements"][k]["revenue"]) or(lista["elements"][k]["budget"]))=="0":
                       net_profit="undefined"
                      else:
-                       net_profit=int(catalog["movies"]["elements"][i]["revenue"])-int(catalog["movies"]["elements"][i]["budget"])
+                       net_profit=int(lista["elements"][k]["revenue"])-int(lista["elements"][k]["budget"])
                      if net_profit!="undefined":
-                       estadistica[año]["net_profit"]+=net_profit
-                     votacion = float(catalog["movies"]["elements"][i]['vote_average'])
-                     nombre = catalog["movies"]["elements"][i]["title"]
-                     if votacion > estadistica[año]['mejor_peli'][1]:
-                       estadistica[año]['mejor_peli'] = (nombre, votacion)
-                     if votacion < estadistica[año]['peor_peli'][1]:
-                       estadistica[año]['peor_peli'] = (nombre, votacion)
+                       estadistica[i]["net_profit"]+=net_profit
+                     votacion = float(lista["elements"][k]['vote_average'])
+                     nombre = lista["elements"][k]["title"]
+                     if votacion > estadistica[i]['mejor_peli'][1]:
+                       estadistica[i]['mejor_peli'] = (nombre, votacion)
+                     if votacion < estadistica[i]['peor_peli'][1]:
+                       estadistica[i]['peor_peli'] = (nombre, votacion)
     estadistica_final={}
     i=int(inicial)
     fini=int(final)
     while i < fini+1:
-        if str(i) in estadistica:
-          estadistica_final[str(i)] = {
-                'total': estadistica[str(i)]["total"],
-                'votacion_prom': estadistica[str(i)]["votacion_prom"] / estadistica[str(i)]["total"],
-                'duracion_prom': estadistica[str(i)]["duracion_prom"] / estadistica[str(i)]["total"],
-                'net_profit': estadistica[str(i)]["net_profit"],
-                'mejor_peli': estadistica[str(i)]["mejor_peli"],
-                'peor_peli': estadistica[str(i)]["peor_peli"]}
+        if i in estadistica:
+          if estadistica[i]["net_profit"]==0:
+              estadistica[i]["net_profit"]=="undefined"
+          estadistica_final[i] = {
+                'total': estadistica[i]["total"],
+                'votacion_prom': estadistica[i]["votacion_prom"] / estadistica[i]["total"],
+                'duracion_prom': estadistica[i]["duracion_prom"] / estadistica[i]["total"],
+                'net_profit': estadistica[i]["net_profit"],
+                'mejor_peli': estadistica[i]["mejor_peli"],
+                'peor_peli': estadistica[i]["peor_peli"]}
         i+=1
     return estadistica_final
 
