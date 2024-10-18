@@ -254,7 +254,10 @@ def main():
             fecha_inf=float(input("ingrese el limite inferior del rango de años: "))
             fecha_sup=float(input("ingrese el limite superior del rango de años: "))
             productora= input("ingrese la productora de la pelicula: ")
+            init_time = logic.get_time()
             sol=logic.req_7(control,productora,fecha_inf,fecha_sup)
+            fisin_time = logic.get_time()
+            print(logic.delta_time(init_time, fisin_time))
             print_req_7(sol)
 
         elif int(inputs) == 9:
