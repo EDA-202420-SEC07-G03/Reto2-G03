@@ -95,13 +95,7 @@ def load_data(catalog, filename):
                        
     return catalog
 
-'''
-catalog = new_logic()
-        
-init_time = get_time()
-load_data(catalogo, "movies-large.csv")        
-fisin_time = get_time()
-print(delta_time(init_time, fisin_time))'''
+
         
 # Funciones de consulta sobre el catálogo
 
@@ -115,13 +109,6 @@ def get_data(catalog, id):
         else:
             return "no se encontro"
 
-'''
-catalog = new_logic()
-        
-init_time = get_time()
-get_data(catalogo, id)        
-fisin_time = get_time()
-print(delta_time(init_time, fisin_time))'''
 
 def req_1(catalog, idioma, movie_title):
     """
@@ -153,15 +140,7 @@ def req_1(catalog, idioma, movie_title):
             }
             return respuesta
 
-'''
-idioma = ''
-movie_title = ''
-catalog = new_logic()
-        
-init_time = get_time()
-req_1(catalog, idioma, movie_title)        
-fisin_time = get_time()
-print(delta_time(init_time, fisin_time))'''
+
 
 def req_2(catalog, n, idioma):
     
@@ -220,15 +199,7 @@ def req_2(catalog, n, idioma):
     
     return resultado
 
-'''
-idioma = ''
-n = 
-catalog = new_logic()
-        
-init_time = get_time()
-req_2(catalog, n, idioma)        
-fisin_time = get_time()
-print(delta_time(init_time, fisin_time))'''
+
 def fecha_str_a_fecha_dias(date):
     año=float(date[:4])
     mes=float(date[5:7])
@@ -258,27 +229,7 @@ def req_3(catalog,idioma,fecha_ini,fecha_final):
     else:
         new_dic["tiempo_prom"]="no hay ninguna pelicula para promediar"
     return new_dic
-""""
-idioma ="en"
-fecha_ini = '2001-01-01'
-fecha_final = '2018-01-01'
-catalog = new_logic()   
-     
-init_time = get_time()
-req_3(catalog,idioma,fecha_ini,fecha_final)        
-fisin_time = get_time()
-print(delta_time(init_time, fisin_time))
-'''
-idioma = ''
-fecha_ini = ''
-fecha_final = ''
-catalog = new_logic()   
-     
-init_time = get_time()
-req_3(catalog,idioma,fecha_ini,fecha_final)        
-fisin_time = get_time()
-print(delta_time(init_time, fisin_time))'''
-"""
+
 def req_4(catalog, estado, fecha_inicial, fecha_final):
     """
     Retorna el resultado del requerimiento 4 basado en el estado de producción y rango de fechas.
@@ -333,16 +284,7 @@ def req_4(catalog, estado, fecha_inicial, fecha_final):
 
     return respuesta
 
-'''
-estado = ''
-fecha_inicial= ''
-fecha_final = ''
-catalog = new_logic()
-        
-init_time = get_time()
-req_4(catalog, estado, fecha_inicial, fecha_final)        
-fisin_time = get_time()
-print(delta_time(init_time, fisin_time))'''
+
 
 def compare_dates(pelicula1,pelicula2):
     fecha1 = time.strptime(pelicula1["release_date"], "%Y-%m-%d")
@@ -389,16 +331,8 @@ def req_5(catalog, rango_presupuesto, fecha_inicial, fecha_final):
 
     return filtro_final
 
-'''
-#rango_presupuesto = ''
-#fecha_inicial= ''
-#fecha_final = ''
-#catalog = new_logic()
 
-#init_time = get_time()
-#req_5(catalog, rango_presupuesto, fecha_inicial, fecha_final)        
-#fisin_time = get_time()
-#print(delta_time(init_time, fisin_time))'''
+
 
 def req_6(catalog, idioma, año_inicial, año_final):
     """
@@ -470,16 +404,7 @@ def req_6(catalog, idioma, año_inicial, año_final):
     
     return resultado
 
-'''
-idioma= ''
-año_inicial =
-año_final =
-catalog = new_logic()
-       
-init_time = get_time()
-req_6(catalog, idioma, año_inicial, año_final)        
-fisin_time = get_time()
-print(delta_time(init_time, fisin_time))'''
+
 
 def compare_years(year_data1, year_data2):
     
@@ -543,16 +468,7 @@ def req_7(catalog,productora,inicial,final):
         i+=1
     return estadistica_final
 
-'''
-productora= 'RM Films International'
-inicial = fecha_str_a_fecha_dias('2015-08-19')
-final = fecha_str_a_fecha_dias('2016-11-23')
-catalog = new_logic()        
 
-init_time = get_time()
-req_7(catalog,productora,inicial,final)        
-fisin_time = get_time()
-print(delta_time(init_time, fisin_time))'''
 
 def req_8(catalog):
     """
